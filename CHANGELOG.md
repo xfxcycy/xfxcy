@@ -5,3 +5,5 @@
 - - 移除了 `handler/finish` 钩子。
 - - 移除了 `requireCsrfToken` 。
 - - 移除了 `sockjs`，转为使用原生 `WebSocket` 。
+- - 移除了 `StorageService.list` 接口。请使用 `StorageModel.list` 。
+  

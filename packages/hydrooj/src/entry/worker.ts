@@ -21,11 +21,6 @@ export async function load() {
     require('../lib/i18n');
     require('../utils');
     require('../error');
-    const config = require('../options')();
-    if (!process.env.CI && !config) {
-        logger.info('Starting setup');
-        return require('./setup').load();
-    }
     const pending = global.addons;
     const fail = [];
     const active = [];
@@ -79,24 +74,11 @@ export async function load() {
     await server.start();
     if (detail) logger.info('finish: server.start');
     if (process.env.NODE_APP_INSTANCE === '0') {
-        const scripts = require('../upgrade').default;
-        let dbVer = (await modelSystem.get('db.ver')) ?? 0;
-        const isFresh = !dbVer;
-        const expected = scripts.length;
-        while (dbVer < expected) {
-            const func = scripts[dbVer];
-            if (typeof func !== 'function' || (isFresh && func.toString().includes('_FRESH_INSTALL_IGNORE'))) {
-                dbVer++;
-                continue;
-            }
-            logger.info('Upgrading database: from %d to %d', dbVer, expected);
-            const result = await func();
-            if (!result) break;
-            dbVer++;
-            await modelSystem.set('db.ver', dbVer);
-        }
+        const dbVer = (await modelSystem.get('db.ver')) ?? 0;
+        if (!dbVer) await modelSystem.set('db.ver', await require('../upgrade').freshInstall());
+        else await modelSystem.set('db.ver', await require('../upgrade').ensureUpgrade());
     }
     logger.success('Server started');
-    if (process.send) process.send('ready');
+    process.send?.('ready');
     return { active, fail };
 }

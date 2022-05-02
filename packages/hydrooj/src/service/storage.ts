@@ -1,9 +1,10 @@
 import { Readable } from 'stream';
 import { URL } from 'url';
 import { createReadStream } from 'fs-extra';
-import { BucketItem, Client, ItemBucketMetadata } from 'minio';
+import { Client, ItemBucketMetadata } from 'minio';
 import { Logger } from '../logger';
 import * as system from '../model/system';
+import { MaybeArray } from '../typeutils';
 
 const logger = new Logger('storage');
 
@@ -72,6 +73,12 @@ function encodeRFC5987ValueChars(str: string) {
     );
 }
 
+function ensureValidPath(path: MaybeArray<string>) {
+    for (const t of typeof path === 'string' ? [path] : path) {
+        if (t.includes('..') || t.includes('//')) throw new Error('Invalid path');
+    }
+}
+
 class StorageService {
     public client: Client;
     public error = '';
@@ -130,7 +137,7 @@ class StorageService {
     }
 
     async put(target: string, file: string | Buffer | Readable, meta: ItemBucketMetadata = {}) {
-        if (target.includes('..') || target.includes('//')) throw new Error('Invalid path');
+        ensureValidPath(target);
         if (typeof file === 'string') file = createReadStream(file);
         try {
             return await this.client.putObject(this.opts.bucket, target, file, meta);
@@ -141,7 +148,7 @@ class StorageService {
     }
 
     async get(target: string, path?: string) {
-        if (target.includes('..') || target.includes('//')) throw new Error('Invalid path');
+        ensureValidPath(target);
         try {
             if (path) return await this.client.fGetObject(this.opts.bucket, target, path);
             return await this.client.getObject(this.opts.bucket, target);
@@ -152,13 +159,7 @@ class StorageService {
     }
 
     async del(target: string | string[]) {
-        if (typeof target === 'string') {
-            if (target.includes('..') || target.includes('//')) throw new Error('Invalid path');
-        } else {
-            for (const t of target) {
-                if (t.includes('..') || t.includes('//')) throw new Error('Invalid path');
-            }
-        }
+        ensureValidPath(target);
         try {
             if (typeof target === 'string') return await this.client.removeObject(this.opts.bucket, target);
             return await this.client.removeObjects(this.opts.bucket, target);
@@ -168,33 +169,8 @@ class StorageService {
         }
     }
 
-    /** @deprecated use StorageModel.list instead. */
-    async list(target: string, recursive = true) {
-        if (target.includes('..') || target.includes('//')) throw new Error('Invalid path');
-        try {
-            const stream = this.client.listObjects(this.opts.bucket, target, recursive);
-            return await new Promise<BucketItem[]>((resolve, reject) => {
-                const results: BucketItem[] = [];
-                stream.on('data', (result) => {
-                    if (result.size) {
-                        results.push({
-                            ...result,
-                            prefix: target,
-                            name: result.name.split(target)[1],
-                        });
-                    }
-                });
-                stream.on('end', () => resolve(results));
-                stream.on('error', reject);
-            });
-        } catch (e) {
-            e.stack = new Error().stack;
-            throw e;
-        }
-    }
-
     async getMeta(target: string) {
-        if (target.includes('..') || target.includes('//')) throw new Error('Invalid path');
+        ensureValidPath(target);
         try {
             const result = await this.client.statObject(this.opts.bucket, target);
             return { ...result.metaData, ...result };
@@ -205,7 +181,7 @@ class StorageService {
     }
 
     async signDownloadLink(target: string, filename?: string, noExpire = false, useAlternativeEndpointFor?: 'user' | 'judge'): Promise<string> {
-        if (target.includes('..') || target.includes('//')) throw new Error('Invalid path');
+        ensureValidPath(target);
         try {
             const headers: Record<string, string> = {};
             if (filename) headers['response-content-disposition'] = `attachment; filename="${encodeRFC5987ValueChars(filename)}"`;
