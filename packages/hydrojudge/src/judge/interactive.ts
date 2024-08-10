@@ -37,6 +37,7 @@ function judgeCase(c: NormalizedCase) {
         let status: number;
         let score = 0;
         let message: any = '';
+        let fragments = [];
         const detail = ctx.config.detail ?? true;
         if (time > c.time) {
             status = STATUS.STATUS_TIME_LIMIT_EXCEEDED;
@@ -51,6 +52,7 @@ function judgeCase(c: NormalizedCase) {
             status = result.status;
             score = result.score;
             message = result.message;
+            fragments = result.fragments;
             if (resInteractor.code && !(resInteractor.stderr || '').trim().length) message += ` (Interactor exited with code ${resInteractor.code})`;
         }
         return {
@@ -61,6 +63,7 @@ function judgeCase(c: NormalizedCase) {
             time,
             memory,
             message,
+            fragments,
         };
     };
 }

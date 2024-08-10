@@ -48,13 +48,14 @@ export async function judge(ctx: Context) {
     } = res;
     let { status } = res;
     let message: any = '';
+    let fragments = [];
     if (status === STATUS.STATUS_ACCEPTED) {
         if (time > ctx.config.time) {
             status = STATUS.STATUS_TIME_LIMIT_EXCEEDED;
         } else if (memory > ctx.config.memory * 1024) {
             status = STATUS.STATUS_MEMORY_LIMIT_EXCEEDED;
         } else {
-            ({ status, message } = await checkers[ctx.config.checker_type]({
+            ({ status, message, fragments } = await checkers[ctx.config.checker_type]({
                 execute: checker.execute,
                 copyIn: checker.copyIn || {},
                 input: { src: input },
@@ -72,7 +73,7 @@ export async function judge(ctx: Context) {
     }
     await Promise.allSettled(Object.values(res.fileIds).map((id) => del(id)));
 
-    if (message) ctx.next({ message });
+    if (message || fragments.length) ctx.next({ message, fragments });
 
     return ctx.end({
         status: status === STATUS.STATUS_ACCEPTED ? STATUS.STATUS_HACK_UNSUCCESSFUL : STATUS.STATUS_HACK_SUCCESSFUL,

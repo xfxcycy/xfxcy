@@ -28,6 +28,7 @@ function judgeCase(c: NormalizedCase) {
         let { status } = res;
         let message: any = '';
         let score = 0;
+        let fragments = [];
         const detail = ctx.config.detail ?? true;
         if (status === STATUS.STATUS_ACCEPTED) {
             if (time > c.time) {
@@ -35,7 +36,9 @@ function judgeCase(c: NormalizedCase) {
             } else if (memory > c.memory * 1024) {
                 status = STATUS.STATUS_MEMORY_LIMIT_EXCEEDED;
             } else {
-                ({ status, score, message } = await checkers[ctx.config.checker_type]({
+                ({
+                    status, score, message, fragments,
+                } = await checkers[ctx.config.checker_type]({
                     execute: ctx.checker.execute,
                     copyIn: ctx.checker.copyIn || {},
                     input: { src: c.input },
@@ -68,6 +71,7 @@ function judgeCase(c: NormalizedCase) {
             time,
             memory,
             message,
+            fragments,
         };
     };
 }

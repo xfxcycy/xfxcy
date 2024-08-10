@@ -20,6 +20,7 @@ type Checker = (config: CheckConfig) => Promise<{
     status: number,
     score: number,
     message: string,
+    fragments?: { name: string, content: string }[],
 }>;
 
 function parseDiffMsg(msg: string) {

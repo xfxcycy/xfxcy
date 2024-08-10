@@ -16,6 +16,7 @@ function judgeCase(c: NormalizedCase) {
         let status = STATUS.STATUS_ACCEPTED;
         let message: any = '';
         let score = 0;
+        let fragments = [];
         const fileIds = [];
         if (ctx.config.subType === 'multi') {
             const res = await runQueued(
@@ -40,7 +41,9 @@ function judgeCase(c: NormalizedCase) {
             fileIds.push(...Object.values(res.fileIds));
         }
         if (status === STATUS.STATUS_ACCEPTED) {
-            ({ status, score, message } = await checkers[ctx.config.checker_type]({
+            ({
+                status, score, message, fragments,
+            } = await checkers[ctx.config.checker_type]({
                 execute: ctx.checker.execute,
                 copyIn: ctx.checker.copyIn || {},
                 input: { src: c.input },
@@ -60,6 +63,7 @@ function judgeCase(c: NormalizedCase) {
             time: 0,
             memory: 0,
             message,
+            fragments,
         };
     };
 }

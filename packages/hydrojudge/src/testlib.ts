@@ -6,6 +6,7 @@ export function parse(output: string, fullscore: number) {
     let status = STATUS.STATUS_WRONG_ANSWER;
     let score = 0;
     let builder = (msg: string) => msg;
+    const fragments = [];
     let message = `${output.substring(0, 1024)} `;
     if (output.startsWith('ok ')) {
         status = STATUS.STATUS_ACCEPTED;
@@ -51,5 +52,26 @@ export function parse(output: string, fullscore: number) {
             score = +val;
         }
     }
-    return { status, score, message: builder(message) };
+    const outputMessage = builder(message);
+    const finalMessage = [];
+    let groupMessageCache = [];
+    let inGroup = null;
+    for (const line of outputMessage.split('\n')) {
+        if (line.startsWith('::group::')) {
+            inGroup = line.split('::group::')[1].trim();
+        } else if (line.startsWith('::endgroup::')) {
+            if (inGroup) {
+                fragments.push({ name: inGroup, content: groupMessageCache.join('\n') });
+                groupMessageCache = [];
+            }
+            inGroup = null;
+        } else if (inGroup) {
+            groupMessageCache.push(line);
+        } else {
+            finalMessage.push(line);
+        }
+    }
+    return {
+        status, score, message: finalMessage.join('\n').substring(0, 512), fragments,
+    };
 }
