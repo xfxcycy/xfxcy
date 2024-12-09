@@ -11,18 +11,19 @@
           <blockquote class="note">{{ _('The ranking page is not updated realtime.') }}</blockquote>
           {{ nothing.render('Sorry, there are no users in this domain.') }}
           {% else %}
-          <table class="data-table">
+          <table class="data-table" style="width: 100%; table-layout: fixed;">
             <colgroup>
-              <col class="col--rank">
-              <col class="col--user">
-              <col class="col--rp">
+              <col class="col--rank" style="width: 5%;">
+              <col class="col--user" style="width: 20%;">
+              <col class="col--rp" style="width: 6%;">
+              <!-- Only include columns for RP details if not hidden -->
               {% for key, def in model.rp %}
                 {% if not def.hidden %}
-                  <col class="col--detail rp-{{ key }}">
+                  <col class="col--detail rp-{{ key }}" style="width: 6%;">
                 {% endif %}
               {% endfor %}
-              <col class="col--ac">
-              <col class="col--bio">
+              <col class="col--ac" style="width: 6%;">
+              <col class="col--bio" style="width: 49%;">
             </colgroup>
             <thead>
               <tr>
@@ -55,7 +56,7 @@
               {% endif %}
               {%- for udoc in udocs -%}
               <tr>
-                <td class="col--rank">{{ (page - 1) * 100 + loop.index }}</td>
+                <td class="col--rank">{{ (page - 1) * 20 + loop.index }}</td>
                 <td class="col--user">{{ user.render_inline(udoc) }}</td>
                 <td class="col--rp">{{ udoc.rp|default(0)|round(0) }}</td>
                 {% for key, def in model.rp %}
