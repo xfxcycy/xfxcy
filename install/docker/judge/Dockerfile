@@ -1,21 +1,7 @@
 FROM node:20
 
 RUN apt-get -qq update && \
-    apt-get install -y \
-    gcc \
-    python3 \
-    g++ \
-    fp-compiler \
-    openjdk-8-jdk-headless \
-    python \
-    php7.0-cli \
-    rustc \
-    haskell-platform \
-    libjavascriptcoregtk-4.0-bin \
-    golang \
-    ruby \
-    mono-runtime \
-    mono-mcs
+    apt-get install -y g++
 
 ADD ./entrypoint.sh /root/entrypoint.sh
 ADD ./judge.yaml /root/judge.yaml
