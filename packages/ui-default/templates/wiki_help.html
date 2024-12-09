@@ -1,23 +1,13 @@
 {% extends "layout/wiki_base.html" %}
 {% block wiki_content %}
 {% set name = handler.domain.ui.name|default(model.system.get('server.name')) %}
-<div class="section" data-heading-extract-to="#menu-item-wiki_help">
-  <div class="section__header">
-    <h1 class="section__title" id="domain" data-heading>{{ _('Domain') }}</h1>
-  </div>
-  <div class="section__body typo">
-    <p>每个用户可以创建自己的域。比如，老师可以为课程创建一个域，然后把题目和学生加入到此域中。再如，可以把域作为团队功能。</p>
-    <p>通过合理的设置角色及其权限，可以把域设为公开或私有。</p>
-    <p>默认域为 system，用户直接访问 {{ name }} 域名就会访问此域，点击 Hydro Logo 会从任意域跳转回 system 域。</p>
-    <p>每个域的题库、讨论、训练以及比赛是独立且自治的。</p>
-  </div>
-</div>
+
 <div class="section" data-heading-extract-to="#menu-item-wiki_help">
   <div class="section__header">
     <h1 class="section__title" id="compiler" data-heading>{{ _("Compilers' Version and Parameters") }}</h1>
   </div>
   <div class="section__body typo">
-    <p>{{ name }} 使用 <a href="https://github.com/hydro-dev/Hydro/tree/master/packages/hydrojudge">HydroJudge</a> 进行评测，编译参数和当前所用编译器版本见状态页。</p>
+    <p>{{ name }} 使用 Intel(R) Xeon(R) Gold 6133 CPU @ 2.50GHz 进行评测</p>
   </div>
 </div>
 <div class="section" data-heading-extract-to="#menu-item-wiki_help">
@@ -146,14 +136,6 @@
 </div>
 <div class="section" data-heading-extract-to="#menu-item-wiki_help">
   <div class="section__header">
-    <h1 class="section__title" id="upload" data-heading>{{ _('Dataset Format') }}</h1>
-  </div>
-  <div class="section__body typo">
-    <p>详见<a href="https://hydro.js.org/docs/user/testdata/">配置文档</a></p>
-  </div>
-</div>
-<div class="section" data-heading-extract-to="#menu-item-wiki_help">
-  <div class="section__header">
     <h1 class="section__title" id="lostpass" data-heading>{{ _('Forgot Password and/or Username') }}</h1>
   </div>
   <div class="section__body typo">
@@ -166,7 +148,7 @@
     <h1 class="section__title" id="markdown" data-heading>{{ _('Markdown') }}</h1>
   </div>
   <div class="section__body typo">
-    <p>Hydro 的 Markdown 区域使用 <a href="http://commonmark.org/help/">CommonMark</a> 语法，并扩展了以下功能：</p>
+    <p> xfxcy 的 Markdown 区域使用 <a href="http://commonmark.org/help/">CommonMark</a> 语法，并扩展了以下功能：</p>
     <ul>
     <li>基于 <a href="https://onemathematicalcat.org/MathJaxDocumentation/TeXSyntax.htm">Katex</a> 语法的数学公式支持。</li>
     <li>使用 <code>@[](/user/uid)</code> 提及用户。</li>
