@@ -39,7 +39,7 @@
       </a></li>
     {% endif %}
     {% if handler.user.hasPerm(perm.PERM_SUBMIT_PROBLEM) %}
-      <li class="menu__item scratchpad--hide"><a class="menu__link{% if page_name == 'problem_submit' %} active{% endif %}" href="{{ url('problem_submit', pid=pdoc.pid|default(pdoc.docId)) }}">
+      <li class="menu__item scratchpad--hide"><a class="tijiao{% if page_name == 'problem_submit' %} active{% endif %}" href="{{ url('problem_submit', pid=pdoc.pid|default(pdoc.docId)) }}">
         <span class="icon icon-send"></span> {{ _('Submit') }}
       </a></li>
     {% elif not handler.user.hasPriv(PRIV.PRIV_USER_PROFILE) %}
@@ -81,15 +81,6 @@
             <span class="icon icon-comment--text"></span> {{ _('Solutions') }}{% if solutionCount !== undefined %} ({{ solutionCount }}){% endif %}
         </a>
     </li>
-{% endif %}
-{% if handler.user.hasPerm(perm.PERM_VIEW_HOMEWORK) %}
-    <li class="menu__item">
-        <a class="menu__link{% if page_name == 'video' %} active{% endif %}" href="https://www.xfxcy.com/video/{{ pdoc.pid|default(pdoc.docId) }}" target="_blank">
-            <span class="icon">▷ </span> {{ _('视频讲解') }}
-
-        </a>
-    </li>
-
 {% endif %}
 
 {% if _canViewFiles %}
@@ -164,4 +155,25 @@
   {% endif %}
   </div>
 </div>
+
+<style>
+.tijiao { 
+    width: 100%;
+    background-color: #2ba6d8;
+    color: #fff;
+    border-radius: 0.25rem;
+    display: inline-flex;
+    align-items: center; 
+    padding: 0.1rem 1.2rem; 
+    justify-content: flex-start; 
+    margin-left: var(--horizontal-align, 0px); 
+    
+}
+
+.tijiao:hover {
+    background-color: #2ba6d8;
+    border-color: #2ba6d8;
+    text-decoration: none;
+}
+</style>
 {% endif %}
