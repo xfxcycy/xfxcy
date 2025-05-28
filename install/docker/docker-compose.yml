@@ -1,16 +1,17 @@
 version: '3.7'
 
 services:
-    
-  # Warning: mongodb here is not password-protected.
-  # DO NOT EXPOSE THIS SERVICE TO THE PUBLIC.
+  # MongoDB 服务（无密码，注意安全）
   oj-mongo:
-    image: mongo
+    image: mongo:latest
     container_name: oj-mongo
     restart: always
     volumes:
       - ./data/mongo:/data/db
+    ports:
+      - "27017:27017"   # 方便本地访问（根据需要）
 
+  # 后端服务
   oj-backend:
     build: ./backend
     container_name: oj-backend
@@ -21,8 +22,9 @@ services:
       - ./data/file:/data/file
       - ./data/backend:/root/.hydro
     ports:
-      - "0.0.0.0:80:8888" # In docker mode, change THIS port instead of port in system settings!
+      - "80:8888"  # 映射外部80端口到容器8888端口
 
+  # 判题服务
   oj-judge:
     build: ./judge
     container_name: oj-judge
